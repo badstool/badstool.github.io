@@ -86,7 +86,7 @@
 <meta property="og:site_name" content="坏凳子">
 <meta property="og:description" content="目标 使用国内源部署k8s 使用三台VM部署  部署准备安装Docker12sudo apt-get updatesudo apt-get install -y docker.io 禁用swap文件编辑/etc/fstab文件，注释掉引用swap的行，保存并重启后输入sudo swapoff -a即可。123456sudo vim /etc/fstab# swap was on /dev/sda5">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-03-25T06:24:17.944Z">
+<meta property="og:updated_time" content="2019-04-19T06:31:19.770Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="k8s部署笔记">
 <meta name="twitter:description" content="目标 使用国内源部署k8s 使用三台VM部署  部署准备安装Docker12sudo apt-get updatesudo apt-get install -y docker.io 禁用swap文件编辑/etc/fstab文件，注释掉引用swap的行，保存并重启后输入sudo swapoff -a即可。123456sudo vim /etc/fstab# swap was on /dev/sda5">
@@ -350,6 +350,25 @@
 </ul>
 <p>通过在线安装的话，时间较长。在国内网站站上找到相关的镜像(docker需要配置阿里云的镜像仓库)<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">docker pull registry.cn-hangzhou.aliyuncs.com/google_containers/kube-controller-manager:v1.13.2</span><br><span class="line">docker pull registry.cn-hangzhou.aliyuncs.com/google_containers/kube-scheduler:v1.13.2</span><br><span class="line">docker pull registry.cn-hangzhou.aliyuncs.com/google_containers/kube-proxy:v1.13.2</span><br><span class="line">docker pull registry.cn-hangzhou.aliyuncs.com/google_containers/pause:3.1</span><br><span class="line">docker pull registry.cn-hangzhou.aliyuncs.com/google_containers/etcd:3.2.24</span><br><span class="line">docker pull registry.cn-hangzhou.aliyuncs.com/google_containers/coredns:1.2.6</span><br><span class="line">docker pull registry.cn-hangzhou.aliyuncs.com/google_containers/kube-apiserver:v1.13.2</span><br></pre></td></tr></table></figure></p>
 <p>把这些images重新tag一下。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">docker tag registry.cn-hangzhou.aliyuncs.com/google_containers/kube-controller-manager:v1.13.2 k8s.gcr.io/kube-controller-manager:v1.13.2 </span><br><span class="line">docker tag registry.cn-hangzhou.aliyuncs.com/google_containers/kube-scheduler:v1.13.2 k8s.gcr.io/kube-scheduler:v1.13.2</span><br><span class="line">docker tag registry.cn-hangzhou.aliyuncs.com/google_containers/kube-proxy:v1.13.2 k8s.gcr.io/kube-proxy:v1.13.2 </span><br><span class="line">docker tag registry.cn-hangzhou.aliyuncs.com/google_containers/pause:3.1 k8s.gcr.io/pause:3.1</span><br><span class="line">docker tag registry.cn-hangzhou.aliyuncs.com/google_containers/etcd:3.2.24 k8s.gcr.io/etcd:3.2.24</span><br><span class="line">docker tag registry.cn-hangzhou.aliyuncs.com/google_containers/coredns:1.2.6 k8s.gcr.io/coredns:1.2.6</span><br><span class="line">docker tag registry.cn-hangzhou.aliyuncs.com/google_containers/kube-apiserver:v1.13.2 k8s.gcr.io/kube-apiserver:v1.13.2</span><br></pre></td></tr></table></figure></p>
+<h3 id="kubeadm-init"><a href="#kubeadm-init" class="headerlink" title="kubeadm init"></a>kubeadm init</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=172.25.0.147 --kubernetes-version=v1.13.2 --ignore-preflight-errors=Swap</span><br></pre></td></tr></table></figure>
+<p>如果kubeadm init执行过程中途出现了什么问题，比如前期忘记挂加速器导致init hang住，你可能会ctrl+c退出init执行。重新配置后，再执行kubeadm init，这时你可能会遇到下面kubeadm的输出：</p>
+<p>kubeadm会自动检查当前环境是否有上次命令执行的“残留”。如果有，必须清理后再行执行init。我们可以通过”kubeadm reset”来清理环境，以备重来。<br>kubeadm reset</p>
+<p>这里需要注意的是，Kubernetes V1.13.2支撑的docker版本最高的是18.06。</p>
+<p>我们为 ubuntu 用户配置 kubectl：<br>su - ubuntu<br>mkdir -p $HOME/.kube<br>sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/configsudo<br>chown $(id -u):$(id -g) $HOME/.kube/config<br>为了使用更便捷，启用 kubectl 命令的自动补全功能。<br>echo “source &lt;(kubectl completion bash)” &gt;&gt; ~/.bashrc<br>这样 ubuntu 用户就可以使用 kubectl 了。</p>
+<h3 id="安装Pod网络"><a href="#安装Pod网络" class="headerlink" title="安装Pod网络"></a>安装Pod网络</h3><p>部署flannel<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml</span><br></pre></td></tr></table></figure></p>
+<h3 id="添加-node-1-和-node-2"><a href="#添加-node-1-和-node-2" class="headerlink" title="添加 node-1 和 node-2"></a>添加 node-1 和 node-2</h3><ol>
+<li>首先通过<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm token list</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>查看是否具有token，如果没有<br>生成一条永久有效的token<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm token create --ttl 0</span><br></pre></td></tr></table></figure></p>
+<ol start="2">
+<li><p>获取ca证书sha256编码hash值</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2&gt;/dev/null | openssl dgst -sha256 -hex | sed &apos;s/^.* //&apos;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>node节点加入</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm join 172.25.0.147:6443 --token ji1f91.3rrpvf3ojvkuokc0 --discovery-token-ca-cert-hash sha256:50b4aefa44c5b4b924a8590feca0827e31c6c456e21c25b27fd8f0d489c34ebc</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
 
       
     </div>
@@ -459,7 +478,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-count">3</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -505,7 +524,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#目标"><span class="nav-number">1.</span> <span class="nav-text">目标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#部署准备"><span class="nav-number">2.</span> <span class="nav-text">部署准备</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装Docker"><span class="nav-number">2.1.</span> <span class="nav-text">安装Docker</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#禁用swap文件"><span class="nav-number">2.2.</span> <span class="nav-text">禁用swap文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装kubeadm-kubelet-and-kubectl"><span class="nav-number">2.3.</span> <span class="nav-text">安装kubeadm, kubelet and kubectl</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#目标"><span class="nav-number">1.</span> <span class="nav-text">目标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#部署准备"><span class="nav-number">2.</span> <span class="nav-text">部署准备</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装Docker"><span class="nav-number">2.1.</span> <span class="nav-text">安装Docker</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#禁用swap文件"><span class="nav-number">2.2.</span> <span class="nav-text">禁用swap文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装kubeadm-kubelet-and-kubectl"><span class="nav-number">2.3.</span> <span class="nav-text">安装kubeadm, kubelet and kubectl</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#kubeadm-init"><span class="nav-number">2.4.</span> <span class="nav-text">kubeadm init</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装Pod网络"><span class="nav-number">2.5.</span> <span class="nav-text">安装Pod网络</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#添加-node-1-和-node-2"><span class="nav-number">2.6.</span> <span class="nav-text">添加 node-1 和 node-2</span></a></li></ol></li></ol></div>
             
 
           </div>
