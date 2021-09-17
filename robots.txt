@@ -1,8 +1,0 @@
-User-agent: *
-Sitemap: http://localhost:1313/sitemap.xml
-
-User-agent: Baiduspider
-Disallow: /
-
-User-agent: baiduspider
-Disallow: /
