@@ -2,6 +2,34 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://badstool.github.io/about/</loc>
+    <lastmod>2021-09-16T16:44:37+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://badstool.github.io/post/</loc>
+    <lastmod>2021-08-09T15:35:18+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://badstool.github.io/</loc>
+    <lastmod>2021-08-09T15:35:18+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://badstool.github.io/post/my-first-post/</loc>
+    <lastmod>2021-08-09T15:35:18+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
     <loc>https://badstool.github.io/categories/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
@@ -9,12 +37,6 @@
   
   <url>
     <loc>https://badstool.github.io/tags/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://badstool.github.io/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>

@@ -5,7 +5,38 @@
     <description>Recent content in 坏凳子 on 坏凳子</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
+    <lastBuildDate>Mon, 09 Aug 2021 15:35:18 +0800</lastBuildDate>
     <atom:link href="https://badstool.github.io/" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>About</title>
+      <link>https://badstool.github.io/about/</link>
+      <pubDate>Thu, 16 Sep 2021 16:44:37 +0800</pubDate>
+      
+      <guid>https://badstool.github.io/about/</guid>
+      <description>&lt;h2 id=&#34;关于我&#34;&gt;关于我&lt;/h2&gt;
+&lt;p&gt;通信行业研发工程师，2008年开始在北京从事ICT行业至今&lt;/p&gt;
+&lt;h2 id=&#34;专业方向&#34;&gt;专业方向&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;云计算/Cloud Computing&lt;/li&gt;
+&lt;li&gt;云原生/Cloud Native&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;兴趣爱好&#34;&gt;兴趣爱好&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;跑步/Running&lt;/li&gt;
+&lt;li&gt;篮球/Basketball&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Posts</title>
+      <link>https://badstool.github.io/post/</link>
+      <pubDate>Mon, 09 Aug 2021 15:35:18 +0800</pubDate>
+      
+      <guid>https://badstool.github.io/post/</guid>
+      <description></description>
+    </item>
     
   </channel>
 </rss>
